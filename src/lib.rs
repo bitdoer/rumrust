@@ -27,7 +27,7 @@ fn convert_pad(input: &str) -> (Vec<u32>, u32, u32) {
     (output, output_rem, chars.len() as u32)
 }
 
-fn murmur3_hash(key: Vec<u32>, mut rem: u32, len: u32, seed: u32) -> u32 {
+fn murmur3_32_hash(key: Vec<u32>, mut rem: u32, len: u32, seed: u32) -> u32 {
     // defining key constants
     const C1: u32 = 0xcc9e2d51;
     const C2: u32 = 0x1b873593;
@@ -78,22 +78,20 @@ fn murmur3_hash(key: Vec<u32>, mut rem: u32, len: u32, seed: u32) -> u32 {
     hash
 }
 
-pub fn murmur3(input: &str, seed: u32) -> u32 {
+/// Returns the result of hashing the input by the x86 32-bit MurmurHash3 algorithm.
+///
+/// # Examples
+/// ```
+/// use rumrust::murmur3;
+///
+/// let input = "The quick brown fox jumps over the lazy dog.";
+/// let seed = 123;
+/// assert_eq!(murmur3_32(input, seed), 4039614496);
+/// let input = "Dagoth Ur was a hotep, I swear it by Azura.";
+/// let seed = 6;
+/// assert_eq!(murmur3_32(input, seed), 1596804321);
+/// ```
+pub fn murmur3_32(input: &str, seed: u32) -> u32 {
     let triple = convert_pad(input);
-    murmur3_hash(triple.0, triple.1, triple.2, seed)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let input = "The quick brown fox jumps over the lazy dog.";
-        let seed = 123;
-        assert_eq!(murmur3(input, seed), 4039614496);
-        let input = "Dagoth Ur was a hotep, I swear it by Azura.";
-        let seed = 6;
-        assert_eq!(murmur3(input, seed), 1596804321);
-    }
+    murmur3_32_hash(triple.0, triple.1, triple.2, seed)
 }
